@@ -6,22 +6,36 @@
     <title>Document</title>
 </head>
 <body>
-    <form id="myForm" method="post">
-
-        <div>
-            Image of Book Cover
-        </div>
-        <label for="ISBN" >ISBN:</label>
-        <input type="text" id="ISBN" name="ISBN" placeholder="ISBN">
-
-        <label for="nameInput">Name:</label>
-        <input type="text" id="nameInput" name="name" placeholder="Name">
-
-        <label for="authorInput">Author:</label>
-        <input type="text" id="authorInput" name="author" placeholder="Author
-
-        <label for="reviewInput">Review:</label>
-        <input type="text" id="reviewInput" name="review" placeholder="Review">
+    <form action="/books/search" method="GET">
+        <input 
+            type="text" 
+            name="q" 
+            placeholder="Search for a book..." 
+            required
+        >
+        <button type="submit">Search</button>
     </form>
+
+    <div id="results"></div>
+
+    <script>
+        document.querySelector('form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const query = document.querySelector('input[name="q"]').value;
+            
+            const response = await fetch(`/books/search?q=${query}`);
+            const books = await response.json();
+            
+            const html = books.map(book => `
+            <div>
+                <h3>${book.title}</h3>
+                <p>${book.author}</p>
+                <img src="${book.coverUrl}" alt="cover">
+            </div>
+            `).join('');
+            
+            document.getElementById('results').innerHTML = html;
+        });
+    </script>
 </body>
 </html>
